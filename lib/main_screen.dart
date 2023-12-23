@@ -41,7 +41,31 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('나만의 웹브라우저'),
-
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.add),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              controller.loadRequest(Uri.parse(value));
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem<String>(
+                value: 'https://www.google.com',
+                child: Text('google'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'https://www.naver.com',
+                child: Text('naver'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'https://www.kakao.com',
+                child: Text('kakao'),
+              ),
+            ],
+          )
+        ],
       ),
       body: WebViewWidget(
         controller: controller,
