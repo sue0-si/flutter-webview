@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -34,6 +35,8 @@ class MyGalleryApp extends StatefulWidget {
 class _MyGalleryAppState extends State<MyGalleryApp> {
   final ImagePicker _picker = ImagePicker();
   List<XFile>? images;
+  int currentImage = 0;
+  final pageController = PageController();
 
   @override
   void initState() {
@@ -43,6 +46,18 @@ class _MyGalleryAppState extends State<MyGalleryApp> {
 
   Future<void> loadImages() async {
     images = await _picker.pickMultiImage();
+
+    if (images != null) {
+      Timer.periodic(const Duration(seconds: 5), (timer) {
+        currentImage++;
+
+        if (currentImage > images!.length - 1) {
+          currentImage = 0;
+        }
+        pageController.animateToPage(currentImage,
+            duration: Duration(milliseconds: 350), curve: Curves.easeIn);
+      });
+    }
     setState(() {});
   }
 
@@ -55,8 +70,9 @@ class _MyGalleryAppState extends State<MyGalleryApp> {
       // 기기의 사진을 갖고 와서 메모리에 저장했다가 뿌려줌
       body: images == null
           ? const Center(child: Text('No data'))
-            // 선택된 사진들을 옆으로 넘길 수 있게
+          // 선택된 사진들을 옆으로 넘길 수 있게
           : PageView(
+              controller: pageController,
               children: images!.map((image) {
                 // StreamBuilder로도 가능
                 return FutureBuilder<Uint8List>(
