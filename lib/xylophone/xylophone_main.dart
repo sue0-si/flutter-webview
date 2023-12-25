@@ -35,6 +35,7 @@ class _XylophoneAppState extends State<XylophoneApp> {
   Soundpool pool = Soundpool.fromOptions(options: SoundpoolOptions.kDefault);
 
   List<int> _soundIds = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -43,47 +44,35 @@ class _XylophoneAppState extends State<XylophoneApp> {
   }
 
   Future<void> initSoundPool() async {
-    int soundId = await rootBundle
-        .load('assets/do1.wav')
-        .then((soundData) {
+    int soundId = await rootBundle.load('assets/do1.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/re.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/re.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/mi.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/mi.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/fa.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/fa.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/sol.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/sol.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/la.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/la.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/si.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/si.wav').then((soundData) {
       return pool.load(soundData);
     });
-    soundId = await rootBundle
-        .load('assets/do2.wav')
-        .then((soundData) {
+    soundId = await rootBundle.load('assets/do2.wav').then((soundData) {
       return pool.load(soundData);
     });
     _soundIds.add(soundId);
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -92,57 +81,64 @@ class _XylophoneAppState extends State<XylophoneApp> {
       appBar: AppBar(
         title: Text("Xylophone"),
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: bars("Do", Colors.red),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: bars("Do", Colors.red, _soundIds[0]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Re", Colors.orange, _soundIds[1]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Mi", Colors.yellow, _soundIds[2]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Fa", Colors.green, _soundIds[3]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Sol", Colors.blue, _soundIds[4]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("La", Colors.indigo, _soundIds[5]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Si", Colors.purple, _soundIds[6]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: bars("Do", Colors.redAccent, _soundIds[7]),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget bars(String text, Color color, int soundId) {
+    return GestureDetector(
+      onTap: () {
+        pool.play(soundId);
+      },
+      child: Container(
+        width: 50,
+        height: double.infinity,
+        color: color,
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Re", Colors.orange),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Mi", Colors.yellow),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Fa", Colors.green),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Sol", Colors.blue),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("La", Colors.indigo),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Si", Colors.purple),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: bars("Do", Colors.redAccent),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
-
-Widget bars(String text, Color color) {
-  return Container(
-    width: 50,
-    height: double.infinity,
-    color: color,
-    child: Center(
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.white),
-      ),
-    ),
-  );
 }
